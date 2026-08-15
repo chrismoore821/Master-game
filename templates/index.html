@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GamePulse // Neon Portal</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+  </head>
+  <body>
+    <div class="cyber-grid"></div>
+
+    <div class="page-shell">
+      <header class="topbar">
+        <div class="brand-wrap">
+          <div class="brand-mark">G</div>
+          <span class="brand-name">GamePulse</span>
+        </div>
+
+        <nav class="main-nav">
+          <a href="/" class="nav-link active">Home</a>
+          <a href="/login" class="nav-link">Admin</a>
+        </nav>
+      </header>
+
+      <main class="content-wrap">
+        <section class="hero">
+          <div class="hero-copy">
+            <span class="hero-badge">Top picks // live</span>
+            <h1>ENTER CHRISMOORE'S GAMES AREANA.</h1>
+            <p>
+              Discover the hottest games, unlock rare downloads, and build your next legendary setup.
+            </p>
+
+            <div class="cta-row">
+              <a href="#games" class="primary-btn">Browse games</a>
+              <a href="/login" class="secondary-btn">Admin login</a>
+            </div>
+
+            <div class="hero-stats">
+              <div class="stat-box">
+                <strong>24K</strong>
+                <span>players online</span>
+              </div>
+              <div class="stat-box">
+                <strong>98%</strong>
+                <span>performance</span>
+              </div>
+              <div class="stat-box">
+                <strong>4.9</strong>
+                <span>user rating</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="hero-panel">
+            <div class="panel-window">
+              <span class="panel-tag">featured drop</span>
+              <h3>Neon Drift</h3>
+              <p>Speed-run the city, outrun the police, and dominate the midnight circuit.</p>
+              <div class="progress-row">
+                <span>download queue</span>
+                <span>92%</span>
+              </div>
+              <div class="progress-bar"><i></i></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="controls-panel">
+          <form class="search-bar" method="get">
+            <input type="text" name="q" value="{{ search_query }}" placeholder="Search games, genres, titles..." />
+            <button type="submit">Scan</button>
+          </form>
+
+          <div class="filter-row">
+            {% for category in categories %}
+              {% if category == 'All' %}
+                <a href="{{ url_for('home') }}" class="filter {% if selected_category == 'All' %}active{% endif %}">{{ category }}</a>
+              {% else %}
+                <a href="{{ url_for('home', category=category) }}" class="filter {% if selected_category == category %}active{% endif %}">{{ category }}</a>
+              {% endif %}
+            {% endfor %}
+          </div>
+        </section>
+
+        <section id="games" class="games-section">
+          <div class="section-heading">
+            <span class="heading-kicker">Library</span>
+            <h2>Available games</h2>
+          </div>
+
+          {% if games %}
+            <div class="games-grid">
+              {% for game in games %}
+                <article class="game-card">
+                  <img src="{{ game.image_url }}" alt="{{ game.title }}" class="game-thumb" />
+                  <div class="game-body">
+                    <div class="game-meta">
+                      <span class="game-tag">{{ game.category }}</span>
+                      <span class="game-rating">4.8</span>
+                    </div>
+                    <h3>{{ game.title }}</h3>
+                    <p>{{ game.description }}</p>
+                  </div>
+                  <div class="card-actions">
+                    <a href="{{ game.download_link }}" target="_blank" rel="noopener" class="download-btn">Download</a>
+                  </div>
+                </article>
+              {% endfor %}
+            </div>
+          {% else %}
+            <div class="empty-state">
+              <h3>No games match your scan.</h3>
+              <p>Try a different name or add a new title from the admin panel.</p>
+            </div>
+          {% endif %}
+        </section>
+      </main>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GamePulse // Admin</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+  </head>
+  <body>
+    <div class="cyber-grid"></div>
+
+    <div class="admin-shell">
+      <header class="topbar admin-topbar">
+        <div class="brand-wrap">
+          <div class="brand-mark">G</div>
+          <span class="brand-name">GamePulse Admin</span>
+        </div>
+
+        <nav class="main-nav">
+          <a href="/" class="nav-link">Home</a>
+          <a href="/logout" class="nav-link">Logout</a>
+        </nav>
+      </header>
+
+      <main class="admin-layout">
+        <section class="admin-panel form-panel">
+          <div class="section-heading small">
+            <span class="heading-kicker">upload</span>
+            <h2>Add new title</h2>
+          </div>
+
+          <form method="POST" class="admin-form">
+            <div class="field-group">
+              <label for="title">Game title</label>
+              <input id="title" type="text" name="title" placeholder="Enter game title" required />
+            </div>
+
+            <div class="field-group">
+              <label for="category">Category</label>
+              <select id="category" name="category">
+                <option value="Action">Action</option>
+                <option value="Racing">Racing</option>
+                <option value="Adventure">Adventure</option>
+                <option value="Strategy">Strategy</option>
+                <option value="Shooter">Shooter</option>
+                <option value="Sports">Sports</option>
+              </select>
+            </div>
+
+            <div class="field-group">
+              <label for="desc">Description</label>
+              <textarea id="desc" name="desc" rows="4" placeholder="Brief description"></textarea>
+            </div>
+
+            <div class="field-group">
+              <label for="link">Download link</label>
+              <input id="link" type="text" name="link" placeholder="Download URL" required />
+            </div>
+
+            <div class="field-group">
+              <label for="img">Image URL</label>
+              <input id="img" type="text" name="img" placeholder="Image URL" />
+            </div>
+
+            <button type="submit" class="primary-btn submit-btn">Add game</button>
+          </form>
+        </section>
+
+        <section class="admin-panel list-panel">
+          <div class="section-heading small">
+            <span class="heading-kicker">system</span>
+            <h2>Current library</h2>
+          </div>
+
+          <ul class="games-list">
+            {% for game in games %}
+              <li class="game-item">
+                <div class="list-item-main">
+                  <span>{{ game.title }}</span>
+                  <small>{{ game.category }}</small>
+                </div>
+                <a href="/delete/{{ game.id }}" class="delete-btn">Delete</a>
+              </li>
+            {% endfor %}
+          </ul>
+        </section>
+      </main>
+    </div>
+  </body>
+</html>
