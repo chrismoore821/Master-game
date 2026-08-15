@@ -1,1 +1,1 @@
-web: gunicorn app:app
+web: poetry install && gunicorn app:app
