@@ -17,6 +17,12 @@ projects:
         sync: false
       - key: FLASK_ENV
         sync: false
+      - key: STRIPE_SECRET_KEY
+        sync: false
+      - key: STRIPE_PRICE_ID
+        sync: false
+      - key: PAYPAL_EMAIL
+        sync: false
       region: frankfurt
       buildCommand: pip install -r requirements.txt
       startCommand: gunicorn app:app
