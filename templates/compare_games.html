@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Compare Games - GamePulse</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+  </head>
+  <body>
+    <div class="cyber-grid"></div>
+    <div class="page-shell">
+      <header class="topbar">
+        <div class="brand-wrap">
+          <div class="brand-mark">G</div>
+          <span class="brand-name">GamePulse</span>
+        </div>
+        <nav class="main-nav">
+          <a href="{{ url_for('home') }}" class="nav-link">Home</a>
+          <a href="{{ url_for('reviews') }}" class="nav-link">Reviews</a>
+          <a href="{{ url_for('trending') }}" class="nav-link">Trending</a>
+          <a href="{{ url_for('news') }}" class="nav-link">News</a>
+          <a href="{{ url_for('compare_games') }}" class="nav-link active">Compare</a>
+        </nav>
+      </header>
+
+      <main class="content-wrap">
+        <section class="section-heading">
+          <span class="heading-kicker">Compare</span>
+          <h2>Compare games side by side</h2>
+        </section>
+
+        <form method="get" class="controls-panel compare-form">
+          <div class="filter-row">
+            <select name="left" class="compare-select">
+              {% for game in games %}
+                <option value="{{ game.id }}" {% if left_game and left_game.id == game.id %}selected{% endif %}>{{ game.title }}</option>
+              {% endfor %}
+            </select>
+
+            <select name="right" class="compare-select">
+              {% for game in games %}
+                <option value="{{ game.id }}" {% if right_game and right_game.id == game.id %}selected{% endif %}>{{ game.title }}</option>
+              {% endfor %}
+            </select>
+
+            <button type="submit" class="primary-btn">Compare</button>
+          </div>
+        </form>
+
+        {% if left_game and right_game %}
+          <div class="content-grid">
+            <article class="info-card">
+              <div class="card-head">
+                <span class="pill">{{ left_game.category }}</span>
+                <strong>{{ '%.1f'|format(left_game.rating) }}</strong>
+              </div>
+              <h3>{{ left_game.title }}</h3>
+              <p>{{ left_game.description }}</p>
+              <div class="meta-row">
+                <span>{{ left_game.reviews_count }} reviews</span>
+                <span>{{ left_game.release_year }}</span>
+              </div>
+            </article>
+
+            <article class="info-card">
+              <div class="card-head">
+                <span class="pill alt">{{ right_game.category }}</span>
+                <strong>{{ '%.1f'|format(right_game.rating) }}</strong>
+              </div>
+              <h3>{{ right_game.title }}</h3>
+              <p>{{ right_game.description }}</p>
+              <div class="meta-row">
+                <span>{{ right_game.reviews_count }} reviews</span>
+                <span>{{ right_game.release_year }}</span>
+              </div>
+            </article>
+          </div>
+        {% endif %}
+      </main>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Edit Profile // GamePulse</title>
+    <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='favicon.svg') }}" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+  </head>
+  <body>
+    <div class="cyber-grid"></div>
+
+    <div class="page-shell">
+      <header class="topbar">
+        <div class="brand-wrap">
+          <div class="brand-mark">G</div>
+          <span class="brand-name">GamePulse</span>
+        </div>
+
+        <nav class="main-nav">
+          <a href="/" class="nav-link">Home</a>
+          <a href="{{ url_for('view_profile', username=user.username) }}" class="nav-link">Back to profile</a>
+          <a href="{{ url_for('user_logout') }}" class="nav-link">Logout</a>
+        </nav>
+      </header>
+
+      <main class="content-wrap">
+        <section class="edit-profile-section">
+          <div class="section-heading">
+            <span class="heading-kicker">profile</span>
+            <h2>Edit your profile</h2>
+          </div>
+
+          <form method="POST" class="profile-form">
+            <div class="form-group">
+              <label for="username">Username</label>
+              <input 
+                id="username"
+                type="text" 
+                name="username" 
+                value="{{ user.username }}"
+                required 
+                minlength="3"
+                maxlength="80"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="email">Email address</label>
+              <input 
+                id="email"
+                type="email" 
+                name="email" 
+                value="{{ user.email }}"
+                required 
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="bio">Bio</label>
+              <textarea 
+                id="bio"
+                name="bio" 
+                placeholder="Tell us about yourself..."
+                maxlength="500"
+                rows="4"
+              >{{ user.bio or '' }}</textarea>
+              <small>Max 500 characters</small>
+            </div>
+
+            <div class="form-group">
+              <label for="profile_image">Profile image URL</label>
+              <input 
+                id="profile_image"
+                type="url" 
+                name="profile_image" 
+                value="{{ user.profile_image or '' }}"
+                placeholder="https://example.com/image.jpg"
+              />
+              <small>Leave empty for default image</small>
+            </div>
+
+            {% if error %}
+              <p class="error-message">{{ error }}</p>
+            {% endif %}
+
+            <div class="form-actions">
+              <button type="submit" class="primary-btn">Save changes</button>
+              <a href="{{ url_for('view_profile', username=user.username) }}" class="secondary-btn">Cancel</a>
+            </div>
+          </form>
+        </section>
+      </main>
+    </div>
+
+    <style>
+      .edit-profile-section {
+        max-width: 600px;
+        margin: 3rem auto;
+      }
+
+      .profile-form {
+        background: rgba(20, 20, 40, 0.8);
+        border: 1px solid rgba(138, 43, 226, 0.3);
+        border-radius: 8px;
+        padding: 2rem;
+        margin-top: 2rem;
+      }
+
+      .form-group {
+        margin-bottom: 1.5rem;
+      }
+
+      .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        color: #8ab2fe;
+        font-weight: 500;
+        font-size: 0.9rem;
+      }
+
+      .form-group input,
+      .form-group textarea {
+        width: 100%;
+        padding: 0.75rem;
+        background: rgba(0, 0, 0, 0.5);
+        border: 1px solid rgba(138, 43, 226, 0.3);
+        color: #fff;
+        border-radius: 4px;
+        font-family: 'Courier New', monospace;
+        font-size: 0.9rem;
+        box-sizing: border-box;
+      }
+
+      .form-group input:focus,
+      .form-group textarea:focus {
+        outline: none;
+        border-color: rgba(138, 43, 226, 0.8);
+        box-shadow: 0 0 10px rgba(138, 43, 226, 0.2);
+      }
+
+      .form-group small {
+        display: block;
+        color: #666;
+        font-size: 0.8rem;
+        margin-top: 0.25rem;
+      }
+
+      .form-actions {
+        display: flex;
+        gap: 1rem;
+        margin-top: 2rem;
+      }
+
+      .form-actions button,
+      .form-actions a {
+        flex: 1;
+        text-align: center;
+        text-decoration: none;
+      }
+
+      .error-message {
+        color: #ff6b6b;
+        background: rgba(255, 107, 107, 0.1);
+        border: 1px solid rgba(255, 107, 107, 0.3);
+        padding: 1rem;
+        border-radius: 4px;
+        margin-bottom: 1rem;
+      }
+
+      @media (max-width: 768px) {
+        .edit-profile-section {
+          margin: 1rem;
+        }
+
+        .profile-form {
+          padding: 1.5rem;
+        }
+
+        .form-actions {
+          flex-direction: column;
+        }
+
+        .form-actions button,
+        .form-actions a {
+          flex: none;
+        }
+      }
+    </style>
+  </body>
+</html>

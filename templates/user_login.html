@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GamePulse // Player Login</title>
+    <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='favicon.svg') }}" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+  </head>
+  <body>
+    <div class="cyber-grid"></div>
+
+    <div class="login-shell">
+      <div class="login-card">
+        <span class="hero-badge">player access</span>
+        <h1>Player login</h1>
+        <p>Log in to your account and manage your gaming profile.</p>
+
+        <form method="POST" class="login-form">
+          <div class="form-group">
+            <input 
+              type="text" 
+              name="username_or_email" 
+              placeholder="Username or email" 
+              required 
+            />
+          </div>
+
+          <div class="form-group">
+            <input 
+              type="password" 
+              name="password" 
+              placeholder="Password" 
+              required 
+            />
+          </div>
+
+          {% if error %}
+            <p class="error-message">{{ error }}</p>
+          {% endif %}
+
+          <button type="submit" class="primary-btn">Enter arena</button>
+        </form>
+
+        <p class="form-footer">
+          New to GamePulse? 
+          <a href="{{ url_for('register') }}" class="link">Create account</a>
+        </p>
+
+        <hr class="divider" />
+
+        <p class="form-footer">
+          <a href="/" class="link">Back to home</a>
+        </p>
+      </div>
+    </div>
+  </body>
+</html>

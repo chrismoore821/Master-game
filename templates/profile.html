@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{ user.username }} // GamePulse Profile</title>
+    <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='favicon.svg') }}" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+  </head>
+  <body>
+    <div class="cyber-grid"></div>
+
+    <div class="page-shell">
+      <header class="topbar">
+        <div class="brand-wrap">
+          <div class="brand-mark">G</div>
+          <span class="brand-name">GamePulse</span>
+        </div>
+
+        <nav class="main-nav">
+          <a href="/" class="nav-link">Home</a>
+          {% if session.get('user_logged_in') %}
+            {% if session.get('username') == user.username %}
+              <a href="{{ url_for('edit_profile') }}" class="nav-link">Edit Profile</a>
+            {% endif %}
+            <a href="{{ url_for('user_logout') }}" class="nav-link">Logout</a>
+          {% else %}
+            <a href="{{ url_for('user_login') }}" class="nav-link">Login</a>
+          {% endif %}
+          <a href="{{ url_for('admin_login') }}" class="nav-link">Admin</a>
+        </nav>
+      </header>
+
+      <main class="content-wrap">
+        <section class="profile-section">
+          <div class="profile-header">
+            <div class="profile-banner">
+              <img src="https://images.unsplash.com/photo-1511379938547-c1f69b13d835?auto=format&fit=crop&w=1200&h=300&q=80" alt="Banner" />
+            </div>
+
+            <div class="profile-info">
+              <div class="profile-avatar">
+                <img 
+                  src="{{ user.profile_image or 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80' }}" 
+                  alt="{{ user.username }}"
+                  class="avatar-image"
+                />
+              </div>
+
+              <div class="profile-details">
+                <h1 class="profile-name">{{ user.username }}</h1>
+                <p class="profile-email">{{ user.email }}</p>
+                <p class="profile-joined">Joined {{ user.created_at.strftime('%B %Y') }}</p>
+                {% if user.bio %}
+                  <p class="profile-bio">{{ user.bio }}</p>
+                {% endif %}
+
+                {% if session.get('user_logged_in') and session.get('username') == user.username %}
+                  <a href="{{ url_for('edit_profile') }}" class="primary-btn small">Edit Profile</a>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+
+          {% if favorite_games %}
+            <section class="favorite-games">
+              <div class="section-heading">
+                <span class="heading-kicker">favorites</span>
+                <h2>Favorite games</h2>
+              </div>
+
+              <div class="games-grid">
+                {% for game in favorite_games %}
+                  <div class="game-card">
+                    <div class="game-image">
+                      <img src="{{ game.image_url }}" alt="{{ game.title }}" />
+                      <span class="game-category">{{ game.category }}</span>
+                    </div>
+                    <div class="game-info">
+                      <h3>{{ game.title }}</h3>
+                      <p>{{ game.description[:80] }}...</p>
+                      <a href="{{ game.download_link }}" target="_blank" class="secondary-btn">Download</a>
+                    </div>
+                  </div>
+                {% endfor %}
+              </div>
+            </section>
+          {% else %}
+            <section class="empty-state">
+              <p>No favorite games yet.</p>
+              {% if session.get('user_logged_in') and session.get('username') == user.username %}
+                <p><a href="/" class="link">Browse games and add favorites</a></p>
+              {% endif %}
+            </section>
+          {% endif %}
+        </section>
+      </main>
+    </div>
+
+    <style>
+      .profile-section {
+        margin: 2rem 0;
+      }
+
+      .profile-header {
+        background: rgba(20, 20, 40, 0.8);
+        border: 1px solid rgba(138, 43, 226, 0.3);
+        border-radius: 8px;
+        overflow: hidden;
+        margin-bottom: 3rem;
+      }
+
+      .profile-banner {
+        width: 100%;
+        height: 200px;
+        overflow: hidden;
+      }
+
+      .profile-banner img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .profile-info {
+        padding: 2rem;
+        display: flex;
+        gap: 2rem;
+        align-items: flex-start;
+      }
+
+      .profile-avatar {
+        flex-shrink: 0;
+      }
+
+      .avatar-image {
+        width: 120px;
+        height: 120px;
+        border-radius: 8px;
+        border: 2px solid rgba(138, 43, 226, 0.5);
+        object-fit: cover;
+        margin-top: -80px;
+      }
+
+      .profile-details {
+        flex: 1;
+      }
+
+      .profile-name {
+        font-size: 2rem;
+        margin: 0 0 0.5rem 0;
+        color: #8aqb2fe;
+      }
+
+      .profile-email {
+        color: #999;
+        margin: 0.25rem 0;
+      }
+
+      .profile-joined {
+        color: #666;
+        font-size: 0.9rem;
+        margin: 0.5rem 0 1rem 0;
+      }
+
+      .profile-bio {
+        color: #ccc;
+        margin: 1rem 0;
+        line-height: 1.6;
+      }
+
+      .primary-btn.small {
+        padding: 0.5rem 1.5rem;
+        font-size: 0.9rem;
+      }
+
+      .favorite-games {
+        margin-top: 3rem;
+      }
+
+      .empty-state {
+        text-align: center;
+        padding: 3rem 2rem;
+        background: rgba(20, 20, 40, 0.5);
+        border: 1px dashed rgba(138, 43, 226, 0.3);
+        border-radius: 8px;
+        color: #999;
+      }
+
+      .empty-state p {
+        margin: 0.5rem 0;
+      }
+
+      .empty-state .link {
+        color: #8ab2fe;
+        text-decoration: none;
+      }
+
+      .empty-state .link:hover {
+        text-decoration: underline;
+      }
+
+      .divider {
+        border: none;
+        border-top: 1px solid rgba(138, 43, 226, 0.2);
+        margin: 1.5rem 0;
+      }
+
+      .form-group {
+        margin-bottom: 1rem;
+      }
+
+      .form-group input,
+      .form-group textarea {
+        width: 100%;
+        padding: 0.75rem;
+        background: rgba(0, 0, 0, 0.5);
+        border: 1px solid rgba(138, 43, 226, 0.3);
+        color: #fff;
+        border-radius: 4px;
+        font-family: 'Courier New', monospace;
+        font-size: 0.9rem;
+      }
+
+      .form-group input:focus,
+      .form-group textarea:focus {
+        outline: none;
+        border-color: rgba(138, 43, 226, 0.8);
+        box-shadow: 0 0 10px rgba(138, 43, 226, 0.2);
+      }
+
+      @media (max-width: 768px) {
+        .profile-info {
+          flex-direction: column;
+          align-items: center;
+          text-align: center;
+        }
+
+        .avatar-image {
+          margin-top: -60px;
+        }
+
+        .profile-name {
+          font-size: 1.5rem;
+        }
+      }
+    </style>
+  </body>
+</html>

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Game Reviews - GamePulse</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+  </head>
+  <body>
+    <div class="cyber-grid"></div>
+    <div class="page-shell">
+      <header class="topbar">
+        <div class="brand-wrap">
+          <div class="brand-mark">G</div>
+          <span class="brand-name">GamePulse</span>
+        </div>
+        <nav class="main-nav">
+          <a href="{{ url_for('home') }}" class="nav-link">Home</a>
+          <a href="{{ url_for('reviews') }}" class="nav-link active">Reviews</a>
+          <a href="{{ url_for('trending') }}" class="nav-link">Trending</a>
+          <a href="{{ url_for('news') }}" class="nav-link">News</a>
+          <a href="{{ url_for('compare_games') }}" class="nav-link">Compare</a>
+        </nav>
+      </header>
+
+      <main class="content-wrap">
+        <section class="section-heading">
+          <span class="heading-kicker">Reviews</span>
+          <h2>Game review + ratings</h2>
+        </section>
+
+        {% if reviews %}
+          <div class="content-grid">
+            {% for review in reviews %}
+              <article class="info-card">
+                <div class="card-head">
+                  <span class="pill">{{ review.author }}</span>
+                  <strong>{{ '%.1f'|format(review.rating) }}</strong>
+                </div>
+                <h3>{{ review.title }}</h3>
+                <p>{{ review.excerpt }}</p>
+                <div class="meta-row">
+                  <span>{{ review.game.title }}</span>
+                  <span>{{ review.created_at.strftime('%b %d, %Y') }}</span>
+                </div>
+              </article>
+            {% endfor %}
+          </div>
+        {% else %}
+          <div class="empty-state">
+            <h3>No reviews yet.</h3>
+            <p>Check back soon for new ratings and opinions.</p>
+          </div>
+        {% endif %}
+      </main>
+    </div>
+  </body>
+</html>

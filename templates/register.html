@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GamePulse // Create Account</title>
+    <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='favicon.svg') }}" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+  </head>
+  <body>
+    <div class="cyber-grid"></div>
+
+    <div class="login-shell">
+      <div class="login-card">
+        <span class="hero-badge">new player // enter</span>
+        <h1>Create account</h1>
+        <p>Join the gaming arena and start your adventure.</p>
+
+        <form method="POST" class="login-form">
+          <div class="form-group">
+            <input 
+              type="text" 
+              name="username" 
+              placeholder="Username" 
+              required 
+              minlength="3"
+              maxlength="80"
+            />
+          </div>
+
+          <div class="form-group">
+            <input 
+              type="email" 
+              name="email" 
+              placeholder="Email address" 
+              required 
+            />
+          </div>
+
+          <div class="form-group">
+            <input 
+              type="password" 
+              name="password" 
+              placeholder="Password (min 6 chars)" 
+              required 
+              minlength="6"
+            />
+          </div>
+
+          <div class="form-group">
+            <input 
+              type="password" 
+              name="confirm_password" 
+              placeholder="Confirm password" 
+              required 
+              minlength="6"
+            />
+          </div>
+
+          {% if error %}
+            <p class="error-message">{{ error }}</p>
+          {% endif %}
+
+          <button type="submit" class="primary-btn">Create account</button>
+        </form>
+
+        <p class="form-footer">
+          Already have an account? 
+          <a href="{{ url_for('user_login') }}" class="link">Log in here</a>
+        </p>
+      </div>
+    </div>
+  </body>
+</html>

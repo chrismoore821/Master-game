@@ -1,0 +1,16 @@
+User-agent: *
+Allow: /
+Allow: /static/
+Disallow: /admin
+
+Sitemap: https://game-pulse-xxxxx.onrender.com/sitemap.xml
+
+# Crawl delay (in seconds)
+Crawl-delay: 1
+
+# Add your domain
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /

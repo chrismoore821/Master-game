@@ -3,7 +3,13 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>GamePulse // Neon Portal</title>
+    <meta name="description" content="Discover the latest game reviews, ratings, trending titles, and FIFA 27 release date news. Compare games and find your next favorite title." />
+    <meta name="keywords" content="game reviews, gaming portal, fifa 27 release date, compare games, top ten games, sports games, action reviews, news and blog" />
+    <meta name="author" content="Game Pulse" />
+    <meta property="og:title" content="Game Pulse - Game Reviews, News & Top Picks" />
+    <meta property="og:description" content="Compare games, check editor reviews, and follow FIFA 27 release date updates and trending titles." />
+    <meta property="og:image" content="{{ url_for('static', filename='logo.svg') }}" />
+    <title>GamePulse // Game Reviews, Trending Games & FIFA 27</title>
     <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='favicon.svg') }}" />
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
   </head>
@@ -19,6 +25,17 @@
 
         <nav class="main-nav">
           <a href="/" class="nav-link active">Home</a>
+          <a href="{{ url_for('reviews') }}" class="nav-link">Reviews</a>
+          <a href="{{ url_for('trending') }}" class="nav-link">Trending</a>
+          <a href="{{ url_for('news') }}" class="nav-link">News</a>
+          <a href="{{ url_for('compare_games') }}" class="nav-link">Compare</a>
+          {% if session.get('user_logged_in') %}
+            <a href="{{ url_for('view_profile', username=session.get('username')) }}" class="nav-link">{{ session.get('username') }}</a>
+            <a href="{{ url_for('user_logout') }}" class="nav-link">Logout</a>
+          {% else %}
+            <a href="{{ url_for('user_login') }}" class="nav-link">Login</a>
+            <a href="{{ url_for('register') }}" class="nav-link">Register</a>
+          {% endif %}
           <a href="/login" class="nav-link">Admin</a>
         </nav>
       </header>
@@ -27,14 +44,14 @@
         <section class="hero">
           <div class="hero-copy">
             <span class="hero-badge">Top picks // live</span>
-            <h1>ENTER CHRISMOORE'S GAMES AREANA.</h1>
+            <h1>FIND YOUR NEXT GAME WIN.</h1>
             <p>
-              Discover the hottest games, unlock rare downloads, and build your next legendary setup.
+              Browse reviews, compare the biggest releases, check trending titles, and track the latest gaming buzz including the FIFA 27 release date conversation.
             </p>
 
             <div class="cta-row">
               <a href="#games" class="primary-btn">Browse games</a>
-              <a href="/login" class="secondary-btn">Admin login</a>
+              <a href="{{ url_for('compare_games') }}" class="secondary-btn">Compare games</a>
             </div>
 
             <div class="hero-stats">
@@ -56,11 +73,11 @@
           <div class="hero-panel">
             <div class="panel-window">
               <span class="panel-tag">featured drop</span>
-              <h3>Neon Drift</h3>
-              <p>Speed-run the city, outrun the police, and dominate the midnight circuit.</p>
+              <h3>FIFA 27</h3>
+              <p>Expect sharper gameplay, smarter tactics, and more immersion as the football season heats up.</p>
               <div class="progress-row">
-                <span>download queue</span>
-                <span>92%</span>
+                <span>launch buzz</span>
+                <span>96%</span>
               </div>
               <div class="progress-bar"><i></i></div>
             </div>
@@ -69,7 +86,7 @@
 
         <section class="controls-panel">
           <form class="search-bar" method="get">
-            <input type="text" name="q" value="{{ search_query }}" placeholder="Search games, genres, titles..." />
+            <input type="text" name="q" value="{{ search_query }}" placeholder="Search games, genres, titles, or FIFA 27..." />
             <button type="submit">Scan</button>
           </form>
 
@@ -80,6 +97,55 @@
               {% else %}
                 <a href="{{ url_for('home', category=category) }}" class="filter {% if selected_category == category %}active{% endif %}">{{ category }}</a>
               {% endif %}
+            {% endfor %}
+          </div>
+
+          <div class="filter-row rating-row">
+            {% for rating_value in rating_filters %}
+              {% if rating_value == 'All' %}
+                <a href="{{ url_for('home', category=selected_category) }}" class="filter {% if selected_rating == 'All' or not selected_rating %}active{% endif %}">All ratings</a>
+              {% else %}
+                <a href="{{ url_for('home', category=selected_category, rating=rating_value) }}" class="filter {% if selected_rating == rating_value %}active{% endif %}">{{ rating_value }}+</a>
+              {% endif %}
+            {% endfor %}
+          </div>
+        </section>
+
+        <section class="feature-strip">
+          <div class="feature-box">
+            <span>Search + filters</span>
+            <strong>Fast discovery</strong>
+          </div>
+          <div class="feature-box">
+            <span>Reviews + ratings</span>
+            <strong>Player tested</strong>
+          </div>
+          <div class="feature-box">
+            <span>Trending / top ten</span>
+            <strong>Live buzz</strong>
+          </div>
+          <div class="feature-box">
+            <span>News + blog</span>
+            <strong>Fresh updates</strong>
+          </div>
+        </section>
+
+        <section class="top-ten-section">
+          <div class="section-heading">
+            <span class="heading-kicker">Trending now</span>
+            <h2>Top ten games</h2>
+          </div>
+
+          <div class="mini-list">
+            {% for game in top_games %}
+              <div class="mini-item">
+                <span class="mini-rank">#{{ loop.index }}</span>
+                <div>
+                  <h3>{{ game.title }}</h3>
+                  <p>{{ game.category }} • {{ game.rating }} rating</p>
+                </div>
+                <span class="mini-score">{{ game.rating }}</span>
+              </div>
             {% endfor %}
           </div>
         </section>
@@ -98,10 +164,14 @@
                   <div class="game-body">
                     <div class="game-meta">
                       <span class="game-tag">{{ game.category }}</span>
-                      <span class="game-rating">4.8</span>
+                      <span class="game-rating">{{ '%.1f'|format(game.rating) }}</span>
                     </div>
                     <h3>{{ game.title }}</h3>
                     <p>{{ game.description }}</p>
+                    <div class="meta-row">
+                      <span>{{ game.reviews_count }} reviews</span>
+                      <span>{{ game.release_year }}</span>
+                    </div>
                   </div>
                   <div class="card-actions">
                     <a href="{{ game.download_link }}" target="_blank" rel="noopener" class="download-btn">Download</a>
@@ -112,9 +182,57 @@
           {% else %}
             <div class="empty-state">
               <h3>No games match your scan.</h3>
-              <p>Try a different name or add a new title from the admin panel.</p>
+              <p>Try a different name or switch to another category and rating filter.</p>
             </div>
           {% endif %}
+        </section>
+
+        <section class="content-grid">
+          <div class="info-panel">
+            <div class="section-heading compact">
+              <span class="heading-kicker">Reviews</span>
+              <h2>Game review + ratings</h2>
+            </div>
+
+            {% for review in featured_reviews %}
+              <article class="info-card">
+                <div class="card-head">
+                  <span class="pill">{{ review.author }}</span>
+                  <strong>{{ '%.1f'|format(review.rating) }}</strong>
+                </div>
+                <h3>{{ review.title }}</h3>
+                <p>{{ review.excerpt }}</p>
+                <a href="{{ url_for('reviews') }}" class="text-link">Read all reviews</a>
+              </article>
+            {% endfor %}
+          </div>
+
+          <div class="info-panel">
+            <div class="section-heading compact">
+              <span class="heading-kicker">Blog</span>
+              <h2>News + blog</h2>
+            </div>
+
+            {% for post in news_posts %}
+              <article class="info-card">
+                <div class="card-head small-gap">
+                  <span class="pill alt">{{ post.category }}</span>
+                </div>
+                <h3>{{ post.title }}</h3>
+                <p>{{ post.excerpt }}</p>
+                <a href="{{ url_for('news') }}" class="text-link">Read article</a>
+              </article>
+            {% endfor %}
+          </div>
+        </section>
+
+        <section class="compare-cta">
+          <div>
+            <span class="heading-kicker">Compare</span>
+            <h2>Which game fits your next session?</h2>
+            <p>Check head-to-head stats, review score, category fit, and release timing before you download.</p>
+          </div>
+          <a href="{{ url_for('compare_games') }}" class="primary-btn">Compare games</a>
         </section>
       </main>
     </div>

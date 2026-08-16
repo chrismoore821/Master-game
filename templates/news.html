@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Gaming News & Blog - GamePulse</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+  </head>
+  <body>
+    <div class="cyber-grid"></div>
+    <div class="page-shell">
+      <header class="topbar">
+        <div class="brand-wrap">
+          <div class="brand-mark">G</div>
+          <span class="brand-name">GamePulse</span>
+        </div>
+        <nav class="main-nav">
+          <a href="{{ url_for('home') }}" class="nav-link">Home</a>
+          <a href="{{ url_for('reviews') }}" class="nav-link">Reviews</a>
+          <a href="{{ url_for('trending') }}" class="nav-link">Trending</a>
+          <a href="{{ url_for('news') }}" class="nav-link active">News</a>
+          <a href="{{ url_for('compare_games') }}" class="nav-link">Compare</a>
+        </nav>
+      </header>
+
+      <main class="content-wrap">
+        <section class="section-heading">
+          <span class="heading-kicker">News & blog</span>
+          <h2>Gaming updates and top stories</h2>
+        </section>
+
+        {% if posts %}
+          <div class="content-grid">
+            {% for post in posts %}
+              <article class="info-card">
+                <div class="card-head">
+                  <span class="pill alt">{{ post.category }}</span>
+                </div>
+                <h3>{{ post.title }}</h3>
+                <p>{{ post.excerpt }}</p>
+                <div class="meta-row">
+                  <span>{{ post.published_at.strftime('%b %d, %Y') }}</span>
+                </div>
+              </article>
+            {% endfor %}
+          </div>
+        {% else %}
+          <div class="empty-state">
+            <h3>No posts yet.</h3>
+            <p>New blog content will appear soon.</p>
+          </div>
+        {% endif %}
+      </main>
+    </div>
+  </body>
+</html>

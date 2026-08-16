@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Trending Games - GamePulse</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+  </head>
+  <body>
+    <div class="cyber-grid"></div>
+    <div class="page-shell">
+      <header class="topbar">
+        <div class="brand-wrap">
+          <div class="brand-mark">G</div>
+          <span class="brand-name">GamePulse</span>
+        </div>
+        <nav class="main-nav">
+          <a href="{{ url_for('home') }}" class="nav-link">Home</a>
+          <a href="{{ url_for('reviews') }}" class="nav-link">Reviews</a>
+          <a href="{{ url_for('trending') }}" class="nav-link active">Trending</a>
+          <a href="{{ url_for('news') }}" class="nav-link">News</a>
+          <a href="{{ url_for('compare_games') }}" class="nav-link">Compare</a>
+        </nav>
+      </header>
+
+      <main class="content-wrap">
+        <section class="section-heading">
+          <span class="heading-kicker">Trending</span>
+          <h2>Top ten games</h2>
+        </section>
+
+        <div class="mini-list">
+          {% for game in games %}
+            <div class="mini-item">
+              <span class="mini-rank">#{{ loop.index }}</span>
+              <div>
+                <h3>{{ game.title }}</h3>
+                <p>{{ game.category }} • {{ game.reviews_count }} reviews</p>
+              </div>
+              <span class="mini-score">{{ '%.1f'|format(game.rating) }}</span>
+            </div>
+          {% endfor %}
+        </div>
+      </main>
+    </div>
+  </body>
+</html>

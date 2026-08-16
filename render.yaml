@@ -1,0 +1,23 @@
+# Exported from Render on 2026-08-16T00:23:24Z
+version: "1"
+projects:
+- name: My project
+  environments:
+  - name: Production
+    services:
+    - type: web
+      name: Master-game-new
+      runtime: python
+      repo: https://github.com/chrismoore821/Master-game
+      plan: free
+      envVars:
+      - key: ADMIN_PASSWORD
+        sync: false
+      - key: SECRET_KEY
+        sync: false
+      - key: FLASK_ENV
+        sync: false
+      region: frankfurt
+      buildCommand: pip install -r requirements.txt
+      startCommand: gunicorn app:app
+      autoDeployTrigger: commit
