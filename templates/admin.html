@@ -54,8 +54,31 @@
             </div>
 
             <div class="field-group">
-              <label for="link">Download link</label>
-              <input id="link" type="text" name="link" placeholder="Download URL" required />
+              <label for="link">Store link</label>
+              <input id="link" type="text" name="link" placeholder="Game store URL" required />
+            </div>
+
+            <div class="field-group">
+              <label for="store_type">Store type</label>
+              <select id="store_type" name="store_type">
+                <option value="steam">Steam</option>
+                <option value="epic">Epic</option>
+                <option value="xbox">Xbox</option>
+                <option value="playstation">PlayStation</option>
+                <option value="gog">GOG</option>
+                <option value="store">Other store</option>
+              </select>
+            </div>
+
+            <div class="field-group">
+              <label for="store_name">Store name</label>
+              <input id="store_name" type="text" name="store_name" placeholder="Steam, Epic, Xbox, etc." />
+            </div>
+
+            <div class="field-group">
+              <label for="affiliate_link">Affiliate link</label>
+              <input id="affiliate_link" type="text" name="affiliate_link" placeholder="Optional affiliate URL (use this if you have one)" />
+              <small id="affiliate_preview" class="affiliate-preview">Preview: no affiliate link selected yet</small>
             </div>
 
             <div class="field-group">
@@ -87,5 +110,38 @@
         </section>
       </main>
     </div>
+
+    <script>
+      const linkInput = document.getElementById('link');
+      const affiliateInput = document.getElementById('affiliate_link');
+      const storeTypeInput = document.getElementById('store_type');
+      const storeNameInput = document.getElementById('store_name');
+      const preview = document.getElementById('affiliate_preview');
+
+      function renderPreview() {
+        const baseLink = (linkInput.value || '').trim();
+        const affiliateLink = (affiliateInput.value || '').trim();
+        const selectedType = (storeTypeInput.value || 'store').trim();
+        const customName = (storeNameInput.value || '').trim();
+        const storeName = customName || selectedType.charAt(0).toUpperCase() + selectedType.slice(1);
+
+        if (affiliateLink) {
+          preview.textContent = 'Preview: ' + affiliateLink;
+          return;
+        }
+
+        if (baseLink) {
+          preview.textContent = 'Preview: ' + baseLink + '?utm_source=gamepulse&utm_medium=affiliate&utm_campaign=' + encodeURIComponent(storeName.toLowerCase().replace(/\s+/g, '-'));
+          return;
+        }
+
+        preview.textContent = 'Preview: no affiliate link selected yet';
+      }
+
+      [linkInput, affiliateInput, storeTypeInput, storeNameInput].forEach((input) => {
+        input.addEventListener('input', renderPreview);
+        input.addEventListener('change', renderPreview);
+      });
+    </script>
   </body>
 </html>
