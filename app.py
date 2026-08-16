@@ -1,5 +1,7 @@
 import os
+import re
 from datetime import datetime
+from urllib.parse import parse_qsl, urlencode, urlparse, urlunparse
 from flask import Flask, render_template, request, redirect, url_for, session, send_file
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import text
@@ -61,6 +63,12 @@ class NewsPost(db.Model):
     excerpt = db.Column(db.Text, nullable=False)
     body = db.Column(db.Text, nullable=False)
     published_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+
+class NewsletterSubscriber(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String(180), unique=True, nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
 
 def admin_login_required(view):
@@ -140,6 +148,27 @@ def get_revenue_streams():
             'highlight': 'Best for: tactics guides, best-of lists, ownership packs',
         },
     ]
+
+
+def build_affiliate_url(target_url, title, store_name='GamePulse'):
+    if not target_url:
+        return '#'
+
+    parsed = urlparse(target_url)
+    params = dict(parse_qsl(parsed.query, keep_blank_values=True))
+    slug = re.sub(r'[^a-z0-9]+', '-', title.lower()).strip('-') or 'game'
+    params.update({
+        'utm_source': 'gamepulse',
+        'utm_medium': 'affiliate',
+        'utm_campaign': slug,
+        'utm_content': store_name.lower().replace(' ', '-')
+    })
+    return urlunparse(parsed._replace(query=urlencode(params)))
+
+
+@app.context_processor
+def inject_helpers():
+    return {'affiliate_url_for': build_affiliate_url}
 
 
 def update_game_store_links():
@@ -348,6 +377,74 @@ with app.app_context():
     update_game_store_links()
     seed_reviews()
     seed_news()
+
+
+@app.route('/newsletter/signup', methods=['POST'])
+def newsletter_signup():
+    email = request.form.get('email', '').strip().lower()
+    if not email:
+        return redirect(url_for('monetize', error='Please enter an email address.'))
+
+    if '@' not in email:
+        return redirect(url_for('monetize', error='Please enter a valid email address.'))
+
+    existing = NewsletterSubscriber.query.filter_by(email=email).first()
+    if not existing:
+        db.session.add(NewsletterSubscriber(email=email))
+        db.session.commit()
+
+    return redirect(url_for('monetize', success='Thanks for joining the GamePulse newsletter!'))
+
+
+@app.route('/checkout/stripe', methods=['POST'])
+def stripe_checkout():
+    stripe_secret_key = os.getenv('STRIPE_SECRET_KEY', '').strip()
+    stripe_price_id = os.getenv('STRIPE_PRICE_ID', '').strip()
+
+    if not stripe_secret_key or not stripe_price_id:
+        return redirect(url_for('monetize', error='Stripe is not configured yet. Add STRIPE_SECRET_KEY and STRIPE_PRICE_ID to your environment variables.'))
+
+    try:
+        import stripe
+    except Exception:
+        return redirect(url_for('monetize', error='The stripe package is not installed yet.'))
+
+    try:
+        stripe.api_key = stripe_secret_key
+        session = stripe.checkout.Session.create(
+            mode='subscription',
+            line_items=[{'price': stripe_price_id, 'quantity': 1}],
+            success_url=url_for('monetize', _external=True) + '?stripe_success=1',
+            cancel_url=url_for('monetize', _external=True) + '?stripe_canceled=1',
+            metadata={'plan': 'premium-membership', 'site': 'gamepulse'}
+        )
+        return redirect(session.url, code=303)
+    except Exception as exc:
+        return redirect(url_for('monetize', error=f'Stripe checkout failed: {exc}'))
+
+
+@app.route('/checkout/paypal', methods=['POST'])
+def paypal_checkout():
+    amount = request.form.get('amount', '19.00').strip() or '19.00'
+    paypal_email = os.getenv('PAYPAL_EMAIL', 'your-paypal-email@example.com').strip()
+    item_name = request.form.get('item_name', 'GamePulse Premium Membership').strip() or 'GamePulse Premium Membership'
+    return_url = url_for('monetize', _external=True)
+
+    params = {
+        'cmd': '_xclick',
+        'business': paypal_email,
+        'item_name': item_name,
+        'amount': amount,
+        'currency_code': 'USD',
+        'return': return_url,
+        'cancel_return': return_url,
+        'notify_url': return_url,
+        'no_shipping': '1',
+        'src': '1',
+        'sra': '1',
+    }
+    query = urlencode(params)
+    return redirect(f'https://www.paypal.com/cgi-bin/webscr?{query}', code=303)
 
 
 @app.route('/')

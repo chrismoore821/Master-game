@@ -175,7 +175,7 @@
                     </div>
                   </div>
                   <div class="card-actions">
-                    <a href="{{ game.affiliate_link or game.download_link }}" target="_blank" rel="noopener" class="download-btn">Buy now</a>
+                    <a href="{{ affiliate_url_for(game.affiliate_link or game.download_link, game.title, game.store_name or 'GamePulse') }}" target="_blank" rel="noopener" class="download-btn">Buy now</a>
                   </div>
                 </article>
               {% endfor %}

@@ -9,6 +9,9 @@ class Config:
     SECRET_KEY = os.getenv('SECRET_KEY', 'dev-secret-key-change-in-production')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     DEBUG = False
+    STRIPE_SECRET_KEY = os.getenv('STRIPE_SECRET_KEY', '')
+    STRIPE_PRICE_ID = os.getenv('STRIPE_PRICE_ID', '')
+    PAYPAL_EMAIL = os.getenv('PAYPAL_EMAIL', 'your-paypal-email@example.com')
 
 
 class DevelopmentConfig(Config):

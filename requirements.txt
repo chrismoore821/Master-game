@@ -4,3 +4,4 @@ SQLAlchemy==2.1.0b3
 Werkzeug==3.0.1
 gunicorn==21.2.0
 python-dotenv==1.0.0
+stripe==10.12.0

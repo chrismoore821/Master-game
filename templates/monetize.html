@@ -105,6 +105,57 @@
 
         <section class="revenue-panel">
           <div class="section-heading compact">
+            <span class="heading-kicker">Checkouts</span>
+            <h2>Membership payments</h2>
+          </div>
+
+          {% if request.args.get('error') %}
+            <p class="form-message error">{{ request.args.get('error') }}</p>
+          {% endif %}
+          {% if request.args.get('success') %}
+            <p class="form-message success">{{ request.args.get('success') }}</p>
+          {% endif %}
+
+          <div class="pricing-grid">
+            <article class="pricing-card">
+              <span class="plan-badge">Stripe</span>
+              <h3>Premium membership</h3>
+              <div class="price">$19<span style="font-size: 1rem;">/mo</span></div>
+              <form action="{{ url_for('stripe_checkout') }}" method="post">
+                <button type="submit" class="primary-btn">Pay with Stripe</button>
+              </form>
+            </article>
+
+            <article class="pricing-card">
+              <span class="plan-badge">PayPal</span>
+              <h3>One-time support</h3>
+              <div class="price">$19</div>
+              <form action="{{ url_for('paypal_checkout') }}" method="post">
+                <input type="hidden" name="amount" value="19.00" />
+                <input type="hidden" name="item_name" value="GamePulse Premium Membership" />
+                <button type="submit" class="secondary-btn">Pay with PayPal</button>
+              </form>
+            </article>
+          </div>
+        </section>
+
+        <section class="revenue-panel">
+          <div class="section-heading compact">
+            <span class="heading-kicker">Newsletter</span>
+            <h2>Join the mailing list</h2>
+          </div>
+
+          <form action="{{ url_for('newsletter_signup') }}" method="post" class="newsletter-form">
+            <label for="newsletter-email">Email address</label>
+            <div class="newsletter-row">
+              <input id="newsletter-email" type="email" name="email" placeholder="you@example.com" required />
+              <button type="submit" class="primary-btn">Sign up</button>
+            </div>
+          </form>
+        </section>
+
+        <section class="revenue-panel">
+          <div class="section-heading compact">
             <span class="heading-kicker">Execution</span>
             <h2>What to launch first</h2>
           </div>
