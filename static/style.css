@@ -127,6 +127,68 @@ a {
   box-shadow: inset 0 0 12px rgba(58, 231, 255, 0.12);
 }
 
+.store-row {
+  margin-top: 12px;
+}
+
+.store-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text);
+}
+
+.store-pill.steam {
+  background: rgba(88, 156, 255, 0.14);
+  border-color: rgba(88, 156, 255, 0.4);
+  color: #74b3ff;
+}
+
+.store-pill.epic {
+  background: rgba(170, 107, 255, 0.14);
+  border-color: rgba(170, 107, 255, 0.4);
+  color: #d19cff;
+}
+
+.store-pill.xbox {
+  background: rgba(46, 204, 113, 0.12);
+  border-color: rgba(46, 204, 113, 0.4);
+  color: #74f0b0;
+}
+
+.store-pill.playstation {
+  background: rgba(97, 132, 255, 0.12);
+  border-color: rgba(97, 132, 255, 0.4);
+  color: #9bb1ff;
+}
+
+.store-pill.gog {
+  background: rgba(255, 165, 67, 0.12);
+  border-color: rgba(255, 165, 67, 0.4);
+  color: #ffc770;
+}
+
+.store-pill.store {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.15);
+  color: var(--muted);
+}
+
+.affiliate-preview {
+  display: block;
+  margin-top: 8px;
+  font-size: 0.8rem;
+  color: var(--muted);
+  line-height: 1.4;
+}
+
 .content-wrap {
   padding-top: 34px;
 }
@@ -806,6 +868,7 @@ a {
 }
 
 .field-group input,
+.field-group select,
 .field-group textarea {
   width: 100%;
   padding: 14px 16px;
@@ -818,6 +881,7 @@ a {
 }
 
 .field-group input:focus,
+.field-group select:focus,
 .field-group textarea:focus {
   border-color: rgba(58, 231, 255, 0.7);
   box-shadow: 0 0 0 4px rgba(58, 231, 255, 0.1);

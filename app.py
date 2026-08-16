@@ -38,6 +38,7 @@ class Game(db.Model):
     download_link = db.Column(db.String(200), nullable=False)
     affiliate_link = db.Column(db.String(300), nullable=True)
     store_name = db.Column(db.String(80), nullable=True, default='Store')
+    store_type = db.Column(db.String(40), nullable=True, default='store')
     image_url = db.Column(db.String(200), nullable=True)
     rating = db.Column(db.Float, nullable=False, default=4.5)
     reviews_count = db.Column(db.Integer, nullable=False, default=0)
@@ -113,6 +114,9 @@ def ensure_schema():
         if 'store_name' not in columns:
             with db.engine.begin() as connection:
                 connection.execute(text("ALTER TABLE game ADD COLUMN store_name VARCHAR(80) DEFAULT 'Store'"))
+        if 'store_type' not in columns:
+            with db.engine.begin() as connection:
+                connection.execute(text("ALTER TABLE game ADD COLUMN store_type VARCHAR(40) DEFAULT 'store'"))
 
 
 def get_revenue_streams():
@@ -173,13 +177,13 @@ def inject_helpers():
 
 def update_game_store_links():
     affiliate_map = {
-        'Neon Drift': ('https://store.steampowered.com/search/?term=Neon+Drift', 'Steam'),
-        'Shadow Strike': ('https://store.steampowered.com/search/?term=Shadow+Strike', 'Steam'),
-        'Skyline Quest': ('https://store.steampowered.com/search/?term=Skyline+Quest', 'Steam'),
-        'Quantum Clash': ('https://store.steampowered.com/search/?term=Quantum+Clash', 'Steam'),
-        'Grid Empire': ('https://store.steampowered.com/search/?term=Grid+Empire', 'Steam'),
-        'Turbo Arena': ('https://store.epicgames.com/en-US/browse?sortBy=relevancy&sortDir=DESC&keywords=Turbo%20Arena', 'Epic'),
-        'FIFA 27': ('https://store.epicgames.com/en-US/browse?sortBy=relevancy&sortDir=DESC&keywords=FIFA%2027', 'Epic'),
+        'Neon Drift': ('https://store.steampowered.com/search/?term=Neon+Drift', 'Steam', 'steam'),
+        'Shadow Strike': ('https://store.steampowered.com/search/?term=Shadow+Strike', 'Steam', 'steam'),
+        'Skyline Quest': ('https://store.steampowered.com/search/?term=Skyline+Quest', 'Steam', 'steam'),
+        'Quantum Clash': ('https://store.steampowered.com/search/?term=Quantum+Clash', 'Steam', 'steam'),
+        'Grid Empire': ('https://store.steampowered.com/search/?term=Grid+Empire', 'Steam', 'steam'),
+        'Turbo Arena': ('https://store.epicgames.com/en-US/browse?sortBy=relevancy&sortDir=DESC&keywords=Turbo%20Arena', 'Epic', 'epic'),
+        'FIFA 27': ('https://store.epicgames.com/en-US/browse?sortBy=relevancy&sortDir=DESC&keywords=FIFA%2027', 'Epic', 'epic'),
     }
 
     for game in Game.query.all():
@@ -187,10 +191,12 @@ def update_game_store_links():
         if target:
             game.affiliate_link = target[0]
             game.store_name = target[1]
+            game.store_type = target[2]
             game.download_link = target[0]
         elif not game.affiliate_link:
             game.affiliate_link = game.download_link
-            game.store_name = 'Store'
+            game.store_name = game.store_name or 'Store'
+            game.store_type = game.store_type or 'store'
 
     db.session.commit()
 
@@ -667,8 +673,12 @@ def admin():
         if not title or not link:
             return redirect(url_for('admin'))
 
+        store_type = request.form.get('store_type', '').strip().lower() or 'store'
+        store_name = request.form.get('store_name', '').strip() or store_type.title() or 'Store'
         affiliate_link = request.form.get('affiliate_link', '').strip() or link
-        store_name = request.form.get('store_name', 'Store').strip() or 'Store'
+
+        if not affiliate_link or affiliate_link == link:
+            affiliate_link = build_affiliate_url(link, title, store_name)
 
         new_game = Game(
             title=title,
@@ -677,6 +687,7 @@ def admin():
             download_link=link,
             affiliate_link=affiliate_link,
             store_name=store_name,
+            store_type=store_type,
             image_url=image or 'https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=900&q=80'
         )
         db.session.add(new_game)

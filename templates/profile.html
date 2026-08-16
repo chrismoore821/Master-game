@@ -79,7 +79,7 @@
                     <div class="game-info">
                       <h3>{{ game.title }}</h3>
                       <p>{{ game.description[:80] }}...</p>
-                      <a href="{{ game.download_link }}" target="_blank" class="secondary-btn">Download</a>
+                      <a href="{{ affiliate_url_for(game.affiliate_link or game.download_link, game.title, game.store_name or 'GamePulse') }}" target="_blank" rel="noopener" class="secondary-btn">Buy now</a>
                     </div>
                   </div>
                 {% endfor %}
