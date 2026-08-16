@@ -34,6 +34,8 @@ class Game(db.Model):
     description = db.Column(db.Text, nullable=False)
     category = db.Column(db.String(50), nullable=False, default='Action')
     download_link = db.Column(db.String(200), nullable=False)
+    affiliate_link = db.Column(db.String(300), nullable=True)
+    store_name = db.Column(db.String(80), nullable=True, default='Store')
     image_url = db.Column(db.String(200), nullable=True)
     rating = db.Column(db.Float, nullable=False, default=4.5)
     reviews_count = db.Column(db.Integer, nullable=False, default=0)
@@ -97,6 +99,71 @@ def ensure_schema():
         if 'release_year' not in columns:
             with db.engine.begin() as connection:
                 connection.execute(text("ALTER TABLE game ADD COLUMN release_year INTEGER NOT NULL DEFAULT 2025"))
+        if 'affiliate_link' not in columns:
+            with db.engine.begin() as connection:
+                connection.execute(text("ALTER TABLE game ADD COLUMN affiliate_link VARCHAR(300)"))
+        if 'store_name' not in columns:
+            with db.engine.begin() as connection:
+                connection.execute(text("ALTER TABLE game ADD COLUMN store_name VARCHAR(80) DEFAULT 'Store'"))
+
+
+def get_revenue_streams():
+    return [
+        {
+            'title': '1. Affiliate game deals',
+            'description': 'Earn commission when visitors buy games, bundles, and accessories through your curated recommendations.',
+            'metric': '8-15% per sale',
+            'highlight': 'Best for: Steam, Epic, Amazon, retailer links',
+        },
+        {
+            'title': '2. Sponsored placements',
+            'description': 'Sell homepage, review, or newsletter slots to gaming brands, studios, and launch campaigns.',
+            'metric': '$150-$1,500/month',
+            'highlight': 'Best for: game launches, hardware, teams, tournaments',
+        },
+        {
+            'title': '3. Premium membership',
+            'description': 'Offer early access to rankings, exclusive reviews, market insights, and member-only game lists.',
+            'metric': '$9-$29/month',
+            'highlight': 'Best for: loyal readers and competitive gamers',
+        },
+        {
+            'title': '4. Email + lead capture',
+            'description': 'Collect newsletter signups, promote deals, and monetize traffic with partner offers and paid promotions.',
+            'metric': 'Lead gen + sponsorships',
+            'highlight': 'Best for: daily gaming news and release alerts',
+        },
+        {
+            'title': '5. Digital downloads + guides',
+            'description': 'Sell game lists, cheat sheets, strategy guides, eBooks, and seasonal ranking packs as instant digital products.',
+            'metric': '$5-$49 per product',
+            'highlight': 'Best for: tactics guides, best-of lists, ownership packs',
+        },
+    ]
+
+
+def update_game_store_links():
+    affiliate_map = {
+        'Neon Drift': ('https://store.steampowered.com/search/?term=Neon+Drift', 'Steam'),
+        'Shadow Strike': ('https://store.steampowered.com/search/?term=Shadow+Strike', 'Steam'),
+        'Skyline Quest': ('https://store.steampowered.com/search/?term=Skyline+Quest', 'Steam'),
+        'Quantum Clash': ('https://store.steampowered.com/search/?term=Quantum+Clash', 'Steam'),
+        'Grid Empire': ('https://store.steampowered.com/search/?term=Grid+Empire', 'Steam'),
+        'Turbo Arena': ('https://store.epicgames.com/en-US/browse?sortBy=relevancy&sortDir=DESC&keywords=Turbo%20Arena', 'Epic'),
+        'FIFA 27': ('https://store.epicgames.com/en-US/browse?sortBy=relevancy&sortDir=DESC&keywords=FIFA%2027', 'Epic'),
+    }
+
+    for game in Game.query.all():
+        target = affiliate_map.get(game.title)
+        if target:
+            game.affiliate_link = target[0]
+            game.store_name = target[1]
+            game.download_link = target[0]
+        elif not game.affiliate_link:
+            game.affiliate_link = game.download_link
+            game.store_name = 'Store'
+
+    db.session.commit()
 
 
 def seed_games():
@@ -105,7 +172,9 @@ def seed_games():
             'title': 'Neon Drift',
             'description': 'High-speed street racing through a glowing futuristic city.',
             'category': 'Racing',
-            'download_link': 'https://example.com/neon-drift',
+            'download_link': 'https://store.steampowered.com/search/?term=Neon+Drift',
+            'affiliate_link': 'https://store.steampowered.com/search/?term=Neon+Drift',
+            'store_name': 'Steam',
             'image_url': 'https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=900&q=80',
             'rating': 4.8,
             'reviews_count': 128,
@@ -115,7 +184,9 @@ def seed_games():
             'title': 'Shadow Strike',
             'description': 'Covert missions, precision attacks, and silent tactical operations.',
             'category': 'Action',
-            'download_link': 'https://example.com/shadow-strike',
+            'download_link': 'https://store.steampowered.com/search/?term=Shadow+Strike',
+            'affiliate_link': 'https://store.steampowered.com/search/?term=Shadow+Strike',
+            'store_name': 'Steam',
             'image_url': 'https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=900&q=80',
             'rating': 4.7,
             'reviews_count': 96,
@@ -125,7 +196,9 @@ def seed_games():
             'title': 'Skyline Quest',
             'description': 'Explore floating kingdoms and ancient ruins in this epic adventure.',
             'category': 'Adventure',
-            'download_link': 'https://example.com/skyline-quest',
+            'download_link': 'https://store.steampowered.com/search/?term=Skyline+Quest',
+            'affiliate_link': 'https://store.steampowered.com/search/?term=Skyline+Quest',
+            'store_name': 'Steam',
             'image_url': 'https://images.unsplash.com/photo-1511884642898-4c92249e20b6?auto=format&fit=crop&w=900&q=80',
             'rating': 4.9,
             'reviews_count': 210,
@@ -135,7 +208,9 @@ def seed_games():
             'title': 'Quantum Clash',
             'description': 'Compete in a cyber war with ultra-fast weapons and battle tactics.',
             'category': 'Shooter',
-            'download_link': 'https://example.com/quantum-clash',
+            'download_link': 'https://store.steampowered.com/search/?term=Quantum+Clash',
+            'affiliate_link': 'https://store.steampowered.com/search/?term=Quantum+Clash',
+            'store_name': 'Steam',
             'image_url': 'https://images.unsplash.com/photo-1528819622761-6bcf002c2d8d?auto=format&fit=crop&w=900&q=80',
             'rating': 4.6,
             'reviews_count': 86,
@@ -145,7 +220,9 @@ def seed_games():
             'title': 'Grid Empire',
             'description': 'Build, expand, and dominate a neon empire of strategic resources.',
             'category': 'Strategy',
-            'download_link': 'https://example.com/grid-empire',
+            'download_link': 'https://store.steampowered.com/search/?term=Grid+Empire',
+            'affiliate_link': 'https://store.steampowered.com/search/?term=Grid+Empire',
+            'store_name': 'Steam',
             'image_url': 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=900&q=80',
             'rating': 4.8,
             'reviews_count': 102,
@@ -155,7 +232,9 @@ def seed_games():
             'title': 'Turbo Arena',
             'description': 'A fast-paced sports battle with futuristic vehicles and skill boosts.',
             'category': 'Sports',
-            'download_link': 'https://example.com/turbo-arena',
+            'download_link': 'https://store.epicgames.com/en-US/browse?sortBy=relevancy&sortDir=DESC&keywords=Turbo%20Arena',
+            'affiliate_link': 'https://store.epicgames.com/en-US/browse?sortBy=relevancy&sortDir=DESC&keywords=Turbo%20Arena',
+            'store_name': 'Epic',
             'image_url': 'https://images.unsplash.com/photo-1517649763962-0c623066013b?auto=format&fit=crop&w=900&q=80',
             'rating': 4.7,
             'reviews_count': 74,
@@ -165,7 +244,9 @@ def seed_games():
             'title': 'FIFA 27',
             'description': 'A realistic football experience with new tactics, enhanced club systems, and sharp presentation.',
             'category': 'Sports',
-            'download_link': 'https://example.com/fifa-27',
+            'download_link': 'https://store.epicgames.com/en-US/browse?sortBy=relevancy&sortDir=DESC&keywords=FIFA%2027',
+            'affiliate_link': 'https://store.epicgames.com/en-US/browse?sortBy=relevancy&sortDir=DESC&keywords=FIFA%2027',
+            'store_name': 'Epic',
             'image_url': 'https://images.unsplash.com/photo-1547347298-4074fc3086f0?auto=format&fit=crop&w=900&q=80',
             'rating': 4.9,
             'reviews_count': 306,
@@ -178,6 +259,7 @@ def seed_games():
         if item['title'] not in existing_titles:
             db.session.add(Game(**item))
 
+    update_game_store_links()
     db.session.commit()
 
 
@@ -263,6 +345,7 @@ with app.app_context():
     db.create_all()
     ensure_schema()
     seed_games()
+    update_game_store_links()
     seed_reviews()
     seed_news()
 
@@ -297,6 +380,7 @@ def home():
     top_games = Game.query.order_by(Game.rating.desc(), Game.id.desc()).limit(10).all()
     featured_reviews = Review.query.order_by(Review.created_at.desc()).limit(3).all()
     news_posts = NewsPost.query.order_by(NewsPost.published_at.desc()).limit(3).all()
+    revenue_streams = get_revenue_streams()
 
     return render_template(
         'index.html',
@@ -309,7 +393,13 @@ def home():
         top_games=top_games,
         featured_reviews=featured_reviews,
         news_posts=news_posts,
+        revenue_streams=revenue_streams,
     )
+
+
+@app.route('/monetize')
+def monetize():
+    return render_template('monetize.html', revenue_streams=get_revenue_streams())
 
 
 @app.route('/reviews')
@@ -480,11 +570,16 @@ def admin():
         if not title or not link:
             return redirect(url_for('admin'))
 
+        affiliate_link = request.form.get('affiliate_link', '').strip() or link
+        store_name = request.form.get('store_name', 'Store').strip() or 'Store'
+
         new_game = Game(
             title=title,
             description=description or 'New cyber game added to the archive.',
             category=category,
             download_link=link,
+            affiliate_link=affiliate_link,
+            store_name=store_name,
             image_url=image or 'https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=900&q=80'
         )
         db.session.add(new_game)

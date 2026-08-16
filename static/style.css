@@ -131,6 +131,109 @@ a {
   padding-top: 34px;
 }
 
+.revenue-panel,
+.monetize-shell {
+  margin-top: 32px;
+  padding: 28px;
+  border: 1px solid var(--line);
+  border-radius: 28px;
+  background: rgba(10, 15, 27, 0.82);
+  box-shadow: 0 0 24px rgba(179, 92, 255, 0.12);
+}
+
+.revenue-grid,
+.monetize-grid,
+.pricing-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 18px;
+  margin-top: 24px;
+}
+
+.revenue-card,
+.monetize-card,
+.pricing-card {
+  background: rgba(13, 19, 34, 0.9);
+  border: 1px solid rgba(132, 152, 255, 0.2);
+  border-radius: 18px;
+  padding: 20px;
+}
+
+.revenue-card h3,
+.monetize-card h3,
+.pricing-card h3 {
+  margin: 0 0 10px;
+  font-size: 1.2rem;
+}
+
+.revenue-card p,
+.monetize-card p,
+.pricing-card p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.revenue-card small,
+.monetize-card small {
+  display: block;
+  margin-top: 12px;
+  color: var(--cyan);
+  font-weight: 600;
+}
+
+.revenue-tag,
+.monetize-price,
+.plan-badge {
+  display: inline-flex;
+  margin-bottom: 12px;
+  padding: 7px 10px;
+  border-radius: 999px;
+  background: rgba(58, 231, 255, 0.1);
+  border: 1px solid rgba(58, 231, 255, 0.4);
+  color: var(--cyan);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.revenue-cta-row,
+.monetize-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-top: 22px;
+}
+
+.pricing-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.pricing-card .price {
+  font-size: 2rem;
+  line-height: 1;
+  font-weight: 800;
+  color: var(--green);
+}
+
+.monetize-list {
+  list-style: none;
+  padding: 0;
+  margin: 18px 0 0;
+  display: grid;
+  gap: 10px;
+  color: var(--muted);
+}
+
+.monetize-list li::before {
+  content: "•";
+  color: var(--cyan);
+  margin-right: 10px;
+}
+
 .hero {
   display: grid;
   grid-template-columns: 1.45fr 0.8fr;

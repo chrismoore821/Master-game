@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Monetize | GamePulse</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+  </head>
+  <body>
+    <div class="cyber-grid"></div>
+
+    <div class="page-shell monetize-shell">
+      <header class="topbar">
+        <div class="brand-wrap">
+          <div class="brand-mark">G</div>
+          <span class="brand-name">GamePulse</span>
+        </div>
+
+        <nav class="main-nav">
+          <a href="{{ url_for('home') }}" class="nav-link">Home</a>
+          <a href="{{ url_for('reviews') }}" class="nav-link">Reviews</a>
+          <a href="{{ url_for('trending') }}" class="nav-link">Trending</a>
+          <a href="{{ url_for('news') }}" class="nav-link">News</a>
+          <a href="{{ url_for('compare_games') }}" class="nav-link">Compare</a>
+          <a href="{{ url_for('monetize') }}" class="nav-link active">Monetize</a>
+        </nav>
+      </header>
+
+      <main class="content-wrap">
+        <section class="hero">
+          <div class="hero-copy">
+            <span class="hero-badge">Revenue engine</span>
+            <h1>MONETIZE YOUR GAMING TRAFFIC.</h1>
+            <p>
+              Turn your game discovery audience into revenue through affiliate deals, sponsor placements, premium memberships, and newsletter campaigns built around the content people already love.
+            </p>
+
+            <div class="cta-row">
+              <a href="#revenue" class="primary-btn">View streams</a>
+              <a href="{{ url_for('home') }}" class="secondary-btn">Back home</a>
+            </div>
+          </div>
+
+          <div class="hero-panel">
+            <div class="panel-window">
+              <span class="panel-tag">estimated lift</span>
+              <h3>$3K-$12K / mo</h3>
+              <p>Potential recurring income from affiliate sales, sponsor packages, and premium access.</p>
+              <div class="progress-row">
+                <span>growth model</span>
+                <span>84%</span>
+              </div>
+              <div class="progress-bar"><i></i></div>
+            </div>
+          </div>
+        </section>
+
+        <section id="revenue" class="revenue-panel">
+          <div class="section-heading compact">
+            <span class="heading-kicker">Revenue</span>
+            <h2>1, 2, 3, 4, 5: the five money-making ideas</h2>
+          </div>
+
+          <div class="monetize-grid">
+            {% for stream in revenue_streams %}
+              <article class="monetize-card">
+                <span class="monetize-price">{{ stream.metric }}</span>
+                <h3>{{ stream.title }}</h3>
+                <p>{{ stream.description }}</p>
+                <small>{{ stream.highlight }}</small>
+              </article>
+            {% endfor %}
+          </div>
+        </section>
+
+        <section class="revenue-panel">
+          <div class="section-heading compact">
+            <span class="heading-kicker">Pricing</span>
+            <h2>Starter revenue plan</h2>
+          </div>
+
+          <div class="pricing-grid">
+            <article class="pricing-card">
+              <span class="plan-badge">Affiliate</span>
+              <h3>Starter package</h3>
+              <div class="price">$299</div>
+              <p>Setup link tracking, curated hot list, and top game deal placements.</p>
+            </article>
+
+            <article class="pricing-card">
+              <span class="plan-badge">Sponsor</span>
+              <h3>Brand package</h3>
+              <div class="price">$799</div>
+              <p>Homepage ad slot, newsletter mention, and featured launch placement.</p>
+            </article>
+
+            <article class="pricing-card">
+              <span class="plan-badge">Membership</span>
+              <h3>Premium club</h3>
+              <div class="price">$19<span style="font-size: 1rem;">/mo</span></div>
+              <p>Members unlock rankings, detailed reviews, and weekly game recommendations.</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="revenue-panel">
+          <div class="section-heading compact">
+            <span class="heading-kicker">Execution</span>
+            <h2>What to launch first</h2>
+          </div>
+
+          <ul class="monetize-list">
+            <li>Set up affiliate links for Steam, Epic Games, Amazon, and accessory bundles.</li>
+            <li>Launch a lightweight newsletter signup with a free game-drop or weekly picks email.</li>
+            <li>Sell one homepage sponsor slot and one featured review partnership.</li>
+            <li>Offer a premium monthly plan after you hit consistent traffic.</li>
+            <li>Track clicks, conversions, and CTR to know which revenue stream performs best.</li>
+          </ul>
+
+          <div class="monetize-actions">
+            <a href="{{ url_for('home') }}" class="primary-btn">Go back to site</a>
+          </div>
+        </section>
+      </main>
+    </div>
+  </body>
+</html>

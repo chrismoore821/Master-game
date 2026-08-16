@@ -29,6 +29,7 @@
           <a href="{{ url_for('trending') }}" class="nav-link">Trending</a>
           <a href="{{ url_for('news') }}" class="nav-link">News</a>
           <a href="{{ url_for('compare_games') }}" class="nav-link">Compare</a>
+          <a href="{{ url_for('monetize') }}" class="nav-link">Monetize</a>
           {% if session.get('user_logged_in') %}
             <a href="{{ url_for('view_profile', username=session.get('username')) }}" class="nav-link">{{ session.get('username') }}</a>
             <a href="{{ url_for('user_logout') }}" class="nav-link">Logout</a>
@@ -174,7 +175,7 @@
                     </div>
                   </div>
                   <div class="card-actions">
-                    <a href="{{ game.download_link }}" target="_blank" rel="noopener" class="download-btn">Download</a>
+                    <a href="{{ game.affiliate_link or game.download_link }}" target="_blank" rel="noopener" class="download-btn">Buy now</a>
                   </div>
                 </article>
               {% endfor %}
@@ -223,6 +224,28 @@
                 <a href="{{ url_for('news') }}" class="text-link">Read article</a>
               </article>
             {% endfor %}
+          </div>
+        </section>
+
+        <section class="revenue-panel">
+          <div class="section-heading compact">
+            <span class="heading-kicker">Monetize</span>
+            <h2>Ways to make money from the site</h2>
+          </div>
+
+          <div class="revenue-grid">
+            {% for stream in revenue_streams %}
+              <article class="revenue-card">
+                <span class="revenue-tag">{{ stream.metric }}</span>
+                <h3>{{ stream.title }}</h3>
+                <p>{{ stream.description }}</p>
+                <small>{{ stream.highlight }}</small>
+              </article>
+            {% endfor %}
+          </div>
+
+          <div class="revenue-cta-row">
+            <a href="{{ url_for('monetize') }}" class="primary-btn">View revenue plan</a>
           </div>
         </section>
 
