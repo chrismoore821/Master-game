@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3107628298197893"
+     crossorigin="anonymous"></script>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="Discover the latest game reviews, ratings, trending titles, and FIFA 27 release date news. Compare games and find your next favorite title." />
@@ -162,7 +164,15 @@
             <div class="games-grid">
               {% for game in games %}
                 <article class="game-card">
-                  <img src="{{ game.image_url }}" alt="{{ game.title }}" class="game-thumb" />
+                  <div class="media-shell">
+                    {% if game.video_url %}
+                      <video class="game-video" controls preload="metadata" playsinline muted loop poster="{{ game.image_url }}">
+                        <source src="{{ game.video_url }}" type="video/mp4" />
+                      </video>
+                    {% else %}
+                      <img src="{{ game.image_url }}" alt="{{ game.title }}" class="game-thumb" loading="lazy" decoding="async" width="600" height="420" />
+                    {% endif %}
+                  </div>
                   <div class="game-body">
                     <div class="game-meta">
                       <span class="game-tag">{{ game.category }}</span>

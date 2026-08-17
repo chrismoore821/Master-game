@@ -40,6 +40,7 @@ class Game(db.Model):
     store_name = db.Column(db.String(80), nullable=True, default='Store')
     store_type = db.Column(db.String(40), nullable=True, default='store')
     image_url = db.Column(db.String(200), nullable=True)
+    video_url = db.Column(db.String(300), nullable=True)
     rating = db.Column(db.Float, nullable=False, default=4.5)
     reviews_count = db.Column(db.Integer, nullable=False, default=0)
     release_year = db.Column(db.Integer, nullable=False, default=2025)
@@ -117,6 +118,9 @@ def ensure_schema():
         if 'store_type' not in columns:
             with db.engine.begin() as connection:
                 connection.execute(text("ALTER TABLE game ADD COLUMN store_type VARCHAR(40) DEFAULT 'store'"))
+        if 'video_url' not in columns:
+            with db.engine.begin() as connection:
+                connection.execute(text("ALTER TABLE game ADD COLUMN video_url VARCHAR(300)"))
 
 
 def get_revenue_streams():
@@ -211,6 +215,7 @@ def seed_games():
             'affiliate_link': 'https://store.steampowered.com/search/?term=Neon+Drift',
             'store_name': 'Steam',
             'image_url': 'https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=900&q=80',
+            'video_url': 'https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4',
             'rating': 4.8,
             'reviews_count': 128,
             'release_year': 2025,
@@ -223,6 +228,7 @@ def seed_games():
             'affiliate_link': 'https://store.steampowered.com/search/?term=Shadow+Strike',
             'store_name': 'Steam',
             'image_url': 'https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=900&q=80',
+            'video_url': 'https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.webm',
             'rating': 4.7,
             'reviews_count': 96,
             'release_year': 2024,
@@ -235,6 +241,7 @@ def seed_games():
             'affiliate_link': 'https://store.steampowered.com/search/?term=Skyline+Quest',
             'store_name': 'Steam',
             'image_url': 'https://images.unsplash.com/photo-1511884642898-4c92249e20b6?auto=format&fit=crop&w=900&q=80',
+            'video_url': 'https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4',
             'rating': 4.9,
             'reviews_count': 210,
             'release_year': 2025,
@@ -247,6 +254,7 @@ def seed_games():
             'affiliate_link': 'https://store.steampowered.com/search/?term=Quantum+Clash',
             'store_name': 'Steam',
             'image_url': 'https://images.unsplash.com/photo-1528819622761-6bcf002c2d8d?auto=format&fit=crop&w=900&q=80',
+            'video_url': 'https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.webm',
             'rating': 4.6,
             'reviews_count': 86,
             'release_year': 2024,
@@ -259,6 +267,7 @@ def seed_games():
             'affiliate_link': 'https://store.steampowered.com/search/?term=Grid+Empire',
             'store_name': 'Steam',
             'image_url': 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=900&q=80',
+            'video_url': 'https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4',
             'rating': 4.8,
             'reviews_count': 102,
             'release_year': 2025,
@@ -271,6 +280,7 @@ def seed_games():
             'affiliate_link': 'https://store.epicgames.com/en-US/browse?sortBy=relevancy&sortDir=DESC&keywords=Turbo%20Arena',
             'store_name': 'Epic',
             'image_url': 'https://images.unsplash.com/photo-1517649763962-0c623066013b?auto=format&fit=crop&w=900&q=80',
+            'video_url': 'https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.webm',
             'rating': 4.7,
             'reviews_count': 74,
             'release_year': 2026,
@@ -283,6 +293,7 @@ def seed_games():
             'affiliate_link': 'https://store.epicgames.com/en-US/browse?sortBy=relevancy&sortDir=DESC&keywords=FIFA%2027',
             'store_name': 'Epic',
             'image_url': 'https://images.unsplash.com/photo-1547347298-4074fc3086f0?auto=format&fit=crop&w=900&q=80',
+            'video_url': 'https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4',
             'rating': 4.9,
             'reviews_count': 306,
             'release_year': 2026,
@@ -293,6 +304,13 @@ def seed_games():
     for item in games:
         if item['title'] not in existing_titles:
             db.session.add(Game(**item))
+
+    for game in Game.query.all():
+        if not game.video_url:
+            for item in games:
+                if item['title'] == game.title and item.get('video_url'):
+                    game.video_url = item['video_url']
+                    break
 
     update_game_store_links()
     db.session.commit()
@@ -668,6 +686,7 @@ def admin():
         description = request.form.get('desc', '').strip()
         link = request.form.get('link', '').strip()
         image = request.form.get('img', '').strip()
+        video = request.form.get('video', '').strip()
         category = request.form.get('category', 'Action').strip()
 
         if not title or not link:
@@ -688,7 +707,8 @@ def admin():
             affiliate_link=affiliate_link,
             store_name=store_name,
             store_type=store_type,
-            image_url=image or 'https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=900&q=80'
+            image_url=image or 'https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=900&q=80',
+            video_url=video or None
         )
         db.session.add(new_game)
         db.session.commit()
